@@ -25,6 +25,6 @@ authRouter.post("/login",authController.loginUserController)
  * @access Public
  */
 
-authRouter.get("/logout")
+authRouter.get("/logout",authController.logoutUserController)
 
 module.exports = authRouter
