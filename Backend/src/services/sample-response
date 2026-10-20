@@ -1,0 +1,102 @@
+{
+  "matchScore": 92,
+  "technicalQuestions": [
+    {
+      "question": "Explain the difference between Virtual DOM and Real DOM in React.js.",
+      "intention": "To assess the candidate's fundamental understanding of React's rendering mechanism and performance optimization.",
+      "answer": "The candidate should explain that the Virtual DOM is a lightweight copy of the Real DOM. When state changes, React updates the Virtual DOM first, performs a 'diffing' process to identify changes, and then updates only the necessary parts of the Real DOM (reconciliation). This minimizes expensive DOM manipulations."
+    },
+    {
+      "question": "How does middleware work in Express.js? Can you give an example?",
+      "intention": "To evaluate the candidate's understanding of the request-response cycle and backend architecture.",
+      "answer": "The candidate should define middleware as functions that have access to the request (req), response (res), and next() function. They should mention uses like logging, authentication, and parsing. Example: app.use(express.json()) to parse JSON bodies or a custom logger function."
+    },
+    {
+      "question": "What are the advantages of using MongoDB over a traditional SQL database for a Job Portal application?",
+      "intention": "To gauge the candidate's knowledge of database selection and schema flexibility.",
+      "answer": "Focus on the schema-less nature of MongoDB, which allows for varying job post fields without rigid migrations. Mention horizontal scalability, JSON-like document structure (BSON) being easy to map to JavaScript objects, and fast read/write operations for high-traffic platforms."
+    },
+    {
+      "question": "How would you implement secure authentication in a MERN stack application?",
+      "intention": "To test knowledge of security and the preferred skill of JWT mentioned in the job description.",
+      "answer": "The candidate should mention using JSON Web Tokens (JWT). The process involves: 1. Hashing passwords using libraries like bcrypt. 2. Generating a token on the server after login. 3. Sending the token to the client. 4. Storing the token (e.g., in HttpOnly cookies). 5. Verifying the token in subsequent requests using middleware."
+    }
+  ],
+  "behavioralQuestions": [
+    {
+      "question": "Describe a time you encountered a difficult bug in your Job Portal project. How did you resolve it?",
+      "intention": "To assess problem-solving skills, persistence, and debugging methodology.",
+      "answer": "The candidate should use the STAR method (Situation, Task, Action, Result). They should highlight using console logs, Chrome DevTools, or Postman to isolate the issue, searching documentation or StackOverflow, and the eventual fix."
+    },
+    {
+      "question": "How do you handle feedback or code reviews from a peer or mentor?",
+      "intention": "To evaluate teamwork, coachability, and communication skills required for collaboration.",
+      "answer": "The candidate should emphasize an open-minded approach, viewing feedback as a learning opportunity, asking clarifying questions if a comment is unclear, and prioritizing the quality of the project over personal ego."
+    }
+  ],
+  "skillGaps": [
+    {
+      "skill": "JWT Authentication",
+      "severity": "medium"
+    },
+    {
+      "skill": "Deployment Platforms (Heroku/Vercel/AWS)",
+      "severity": "medium"
+    },
+    {
+      "skill": "System Design Basics",
+      "severity": "low"
+    },
+    {
+      "skill": "Unit Testing (Jest/Mocha)",
+      "severity": "high"
+    }
+  ],
+  "preparationPlan": [
+    {
+      "day": 1,
+      "focus": "Frontend Deep Dive",
+      "tasks": [
+        "Review React Hooks (useEffect, useContext, useMemo)",
+        "Practice building a responsive UI component from scratch",
+        "Study React performance optimization techniques"
+      ]
+    },
+    {
+      "day": 2,
+      "focus": "Backend & API Development",
+      "tasks": [
+        "Deep dive into Express middleware and error handling",
+        "Practice REST API best practices (Status codes, HTTP methods)",
+        "Implement a small Node.js project using JWT for auth"
+      ]
+    },
+    {
+      "day": 3,
+      "focus": "Database & Data Modeling",
+      "tasks": [
+        "Review MongoDB aggregation pipelines",
+        "Practice designing schemas for relational data in NoSQL (referencing vs embedding)",
+        "Study indexing for query optimization"
+      ]
+    },
+    {
+      "day": 4,
+      "focus": "Tools and Deployment",
+      "tasks": [
+        "Learn basics of Docker or deployment on Vercel/Render",
+        "Review Git workflows (branching, merging, pull requests)",
+        "Brush up on basic System Design (Load balancing, Caching)"
+      ]
+    },
+    {
+      "day": 5,
+      "focus": "Soft Skills & Portfolio Review",
+      "tasks": [
+        "Prepare STAR method stories for behavioral questions",
+        "Conduct a mock interview focusing on coding communication",
+        "Review and document project code for clean-code standards"
+      ]
+    }
+  ]
+}
