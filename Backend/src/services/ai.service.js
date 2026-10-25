@@ -9,12 +9,12 @@ const interviewReportSchema = z.object({
     matchScore : z.number().describe("The match score is a number between 0 and 100 that indicates how well the candidate's resume and self describe match the job describe."),
     technicalQuestions : z.array(z.object({
         question: z.string().describe("The technical question can be asked in the interview"),
-        intention: z.string().describe("The intentions behind the technical question"),
+        intentions: z.string().describe("The intentions behind the technical question"),
         answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
     })).describe("The technical questions are the questions that are asked to test the candidate's technical knowledge and skills."),
-    behavioralQuestions : z.array(z.object({
+    behaviouralQuestions : z.array(z.object({
         question: z.string().describe("The behavioral question can be asked in the interview"),
-        intention: z.string().describe("The intentions behind the behavioral question"),
+        intentions: z.string().describe("The intentions behind the behavioral question"),
         answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
     })).describe("The behavioral questions are the questions that are asked to understand the candidate's personality, attitude, and behavior in different situations."),
     skillGaps : z.array(z.object({
@@ -43,7 +43,7 @@ async function generateInterviewReport({resume, selfDescription, jobDescription}
             responseJsonSchema:z.toJSONSchema(interviewReportSchema)
         }
     })
-    console.log(response.text)
+    return JSON.parse(response.text)
 }
 
 module.exports = generateInterviewReport
