@@ -1,0 +1,547 @@
+.home {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 3rem 1.5rem;
+
+  background-color: #0b0f12;
+  color: #f4f5f7;
+
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+    sans-serif;
+
+  * {
+    box-sizing: border-box;
+  }
+
+  .home-container {
+    width: 100%;
+    max-width: 920px;
+    margin: auto;
+  }
+
+  // Header
+
+  .home-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 750;
+      letter-spacing: -1px;
+      line-height: 1.3;
+      margin: 0;
+
+      span {
+        color: #f32d79;
+      }
+    }
+
+    p {
+      color: #9299a5;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-top: 0.7rem;
+    }
+  }
+
+  // Main Form
+
+  .interview-form {
+    width: 100%;
+    background-color: #141a21;
+
+    border: 1px solid #252c35;
+    border-radius: 1rem;
+
+    overflow: hidden;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+  }
+
+  .interview-input-group {
+    display: flex;
+    align-items: stretch;
+
+    min-height: 530px;
+  }
+
+  // Common Section Heading
+
+  .section-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 1.2rem;
+
+    .heading-title {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+
+      font-size: 1rem;
+      font-weight: 650;
+
+      i {
+        color: #f32d79;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 0.3rem 0.55rem;
+
+    border-radius: 0.35rem;
+
+    font-size: 0.65rem;
+    font-weight: 750;
+    letter-spacing: 0.4px;
+
+    white-space: nowrap;
+  }
+
+  .required-badge,
+  .best-results-badge {
+    color: #f32d79;
+    background-color: rgba(243, 45, 121, 0.13);
+  }
+
+  // Left Section
+
+  .left {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+
+    padding: 1.5rem;
+
+    border-right: 1px solid #252c35;
+
+    .textarea-wrapper {
+      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    textarea {
+      flex: 1;
+      width: 100%;
+      min-height: 400px;
+
+      padding: 1rem;
+
+      border: 1px solid #252c35;
+      border-radius: 0.65rem;
+
+      outline: none;
+      resize: none;
+
+      background-color: #202635;
+      color: #f4f5f7;
+
+      font-family: inherit;
+      font-size: 0.9rem;
+      line-height: 1.6;
+
+      transition: border-color 0.2s ease;
+
+      &::placeholder {
+        color: #858c9b;
+      }
+
+      &:focus {
+        border-color: #f32d79;
+      }
+    }
+
+    .character-count {
+      position: absolute;
+      right: 1rem;
+      bottom: 0.8rem;
+
+      color: #858c9b;
+      font-size: 0.75rem;
+
+      pointer-events: none;
+    }
+  }
+
+  // Right Section
+
+  .right {
+    width: 50%;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 1.5rem;
+
+    gap: 1rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+
+    label {
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+  }
+
+  .upload-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+
+    flex-wrap: wrap;
+  }
+
+  // Resume Upload
+
+  .file-label {
+    width: 100%;
+    min-height: 130px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    gap: 0.5rem;
+
+    padding: 1.2rem;
+
+    background-color: #202635;
+
+    border: 1px dashed #343d4c;
+    border-radius: 0.65rem;
+
+    cursor: pointer;
+
+    text-align: center;
+
+    transition: all 0.25s ease;
+
+    &:hover {
+      border-color: #f32d79;
+      background-color: #242938;
+    }
+
+    .upload-icon {
+      font-size: 2rem;
+      color: #f32d79;
+    }
+
+    .upload-text {
+      max-width: 100%;
+
+      color: #e5e7eb;
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    small {
+      color: #858c9b;
+      font-size: 0.75rem;
+    }
+  }
+
+  // Divider
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+
+    margin: 0.1rem 0;
+
+    span {
+      flex: 1;
+      height: 1px;
+      background-color: #2a3039;
+    }
+
+    p {
+      color: #858c9b;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 0;
+    }
+  }
+
+  // Self Description
+
+  .self-description-group {
+    textarea {
+      width: 100%;
+      min-height: 100px;
+
+      padding: 0.9rem 1rem;
+
+      border: 1px solid #69314b;
+      border-radius: 0.65rem;
+
+      outline: none;
+      resize: vertical;
+
+      background-color: #202635;
+      color: #f4f5f7;
+
+      font-family: inherit;
+      font-size: 0.85rem;
+      line-height: 1.6;
+
+      transition: border-color 0.2s ease;
+
+      &::placeholder {
+        color: #858c9b;
+      }
+
+      &:focus {
+        border-color: #f32d79;
+      }
+    }
+  }
+
+  // Information Message
+
+  .info-message {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 0.7rem;
+
+    padding: 0.8rem 1rem;
+
+    background-color: #1c3156;
+
+    border: 1px solid #263e68;
+    border-radius: 0.65rem;
+
+    color: #c7d7f5;
+
+    i {
+      color: #60a5fa;
+      font-size: 1rem;
+      margin-top: 0.1rem;
+    }
+
+    p {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+  }
+
+  // Form Footer
+
+  .form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 1rem;
+
+    padding: 1rem 1.5rem;
+
+    border-top: 1px solid #252c35;
+
+    .generation-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      color: #858c9b;
+      font-size: 0.8rem;
+
+      margin: 0;
+
+      i {
+        color: #f32d79;
+      }
+    }
+  }
+
+  // Generate Button
+
+  .generate-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 0.6rem;
+
+    padding: 0.85rem 1.5rem;
+
+    border: none;
+    border-radius: 0.6rem;
+
+    background: linear-gradient(135deg, #f32d79, #ed0759);
+
+    color: #ffffff;
+
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    i {
+      font-size: 0.9rem;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(243, 45, 121, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 3px;
+    }
+  }
+
+  // Bottom Footer
+
+  .home-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 1.5rem;
+
+    margin-top: 2rem;
+
+    a {
+      color: #858c9b;
+      font-size: 0.8rem;
+      font-weight: 500;
+
+      text-decoration: none;
+
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #f32d79;
+      }
+    }
+  }
+
+  // Responsive Design
+
+  @media (max-width: 768px) {
+    padding: 2rem 1rem;
+
+    .home-header {
+      margin-bottom: 1.5rem;
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+      }
+
+      .desktop-break {
+        display: none;
+      }
+    }
+
+    .interview-input-group {
+      flex-direction: column;
+      min-height: auto;
+    }
+
+    .left,
+    .right {
+      width: 100%;
+      padding: 1.2rem;
+    }
+
+    .left {
+      border-right: none;
+      border-bottom: 1px solid #252c35;
+
+      textarea {
+        min-height: 250px;
+      }
+    }
+
+    .right {
+      gap: 1rem;
+    }
+
+    .form-footer {
+      flex-direction: column;
+      align-items: stretch;
+
+      padding: 1.2rem;
+
+      .generation-info {
+        justify-content: center;
+        text-align: center;
+      }
+
+      .generate-button {
+        width: 100%;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 0.75rem;
+
+    .home-header {
+      h1 {
+        font-size: 1.5rem;
+        letter-spacing: -0.5px;
+      }
+    }
+
+    .section-heading {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      font-size: 0.6rem;
+    }
+
+    .home-footer {
+      gap: 1rem;
+      flex-wrap: wrap;
+
+      a {
+        font-size: 0.75rem;
+      }
+    }
+  }
+}
