@@ -112,6 +112,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 async function generatePdfFromHtml(htmlContent) {
     let browser
+    const startedAt = Date.now()
 
     try {
         const launchOptions = {
@@ -125,12 +126,17 @@ async function generatePdfFromHtml(htmlContent) {
         }
 
         browser = await puppeteer.launch(launchOptions)
+        console.log(`[resume-pdf] browser ready in ${Date.now() - startedAt}ms`)
+
         const page = await browser.newPage()
         await page.setJavaScriptEnabled(false)
-        await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: PDF_TIMEOUT_MS })
+        await page.setContent(htmlContent, { waitUntil: "domcontentloaded", timeout: PDF_TIMEOUT_MS })
+        console.log(`[resume-pdf] content loaded in ${Date.now() - startedAt}ms`)
 
         const pdfBuffer = await page.pdf({
             format: "A4",
+            printBackground: true,
+            waitForFonts: false,
             timeout: PDF_TIMEOUT_MS,
             margin: {
                 top: "20mm",
@@ -139,8 +145,12 @@ async function generatePdfFromHtml(htmlContent) {
                 right: "15mm"
             }
         })
+        console.log(`[resume-pdf] generated ${pdfBuffer.length} bytes in ${Date.now() - startedAt}ms`)
 
         return pdfBuffer
+    } catch (err) {
+        console.error(`[resume-pdf] failed after ${Date.now() - startedAt}ms:`, err.message)
+        throw err
     } finally {
         if (browser) {
             await browser.close().catch(() => {})
