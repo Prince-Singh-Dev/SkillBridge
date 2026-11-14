@@ -1,36 +1,28 @@
 {
-  "name": "skillbridge",
+  "name": "yt-genai",
   "version": "1.0.0",
-  "description": "SkillBridge is an AI-based career and learning assistant designed to help students understand the gap between their current skills and their desired career. It analyzes the student’s existing skills, compares them with career requirements, and identifies missing skills. Based on this analysis, it provides priorities and a personalized learning roadmap.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx nodemon server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Prince-Singh-Dev/SkillBridge.git"
-  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Prince-Singh-Dev/SkillBridge/issues"
-  },
-  "homepage": "https://github.com/Prince-Singh-Dev/SkillBridge#readme",
   "dependencies": {
-    "@google/genai": "^2.30.0",
+    "@google/genai": "^1.42.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
-    "dotenv": "^18.0.1",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^9.10.1",
-    "multer": "^2.5.0",
+    "mongoose": "^9.2.1",
+    "multer": "^2.0.2",
     "pdf-parse": "^2.4.5",
-    "zod": "^4.6.7",
-    "zod-to-json-schema": "^3.25.2"
+    "puppeteer": "^24.37.5",
+    "zod": "^3.25.76",
+    "zod-to-json-schema": "^3.25.1"
   }
 }
