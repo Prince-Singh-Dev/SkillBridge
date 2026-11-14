@@ -7,6 +7,11 @@ import { login, register, logout, getMe } from "../services/auth.api";
 export const useAuth = () => {
 
     const context = useContext(AuthContext)
+
+    if (!context) {
+        throw new Error("useAuth must be used within an AuthProvider")
+    }
+
     const { user, setUser, loading, setLoading } = context
 
 
@@ -15,8 +20,7 @@ export const useAuth = () => {
         try {
             const data = await login({ email, password })
             setUser(data.user)
-        } catch (err) {
-
+            return data
         } finally {
             setLoading(false)
         }
@@ -27,8 +31,7 @@ export const useAuth = () => {
         try {
             const data = await register({ username, email, password })
             setUser(data.user)
-        } catch (err) {
-
+            return data
         } finally {
             setLoading(false)
         }
@@ -37,10 +40,8 @@ export const useAuth = () => {
     const handleLogout = async () => {
         setLoading(true)
         try {
-            const data = await logout()
+            await logout()
             setUser(null)
-        } catch (err) {
-
         } finally {
             setLoading(false)
         }
@@ -48,19 +49,26 @@ export const useAuth = () => {
 
     useEffect(() => {
 
+        let isActive = true
+
         const getAndSetUser = async () => {
             try {
-
                 const data = await getMe()
-                setUser(data.user)
-            } catch (err) { } finally {
-                setLoading(false)
+                if (isActive) setUser(data.user)
+            } catch {
+                if (isActive) setUser(null)
+            } finally {
+                if (isActive) setLoading(false)
             }
         }
 
         getAndSetUser()
 
-    }, [])
+        return () => {
+            isActive = false
+        }
+
+    }, [ setLoading, setUser ])
 
     return { user, loading, handleRegister, handleLogin, handleLogout }
 }

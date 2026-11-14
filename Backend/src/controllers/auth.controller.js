@@ -3,6 +3,31 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const tokenBlacklistModel = require("../models/blacklist.model")
 
+const COOKIE_NAME = "token"
+const TOKEN_EXPIRES_IN = "1d"
+const TOKEN_MAX_AGE = 24 * 60 * 60 * 1000
+
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: TOKEN_MAX_AGE
+}
+
+const clearCookieOptions = {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production"
+}
+
+function createToken(user) {
+    return jwt.sign(
+        { id: user._id, username: user.username },
+        process.env.JWT_SECRET,
+        { expiresIn: TOKEN_EXPIRES_IN }
+    )
+}
+
 /**
  * @name registerUserController
  * @description register a new user, expects username, email and password in the request body
@@ -11,12 +36,6 @@ const tokenBlacklistModel = require("../models/blacklist.model")
 async function registerUserController(req, res) {
 
     const { username, email, password } = req.body
-
-    if (!username || !email || !password) {
-        return res.status(400).json({
-            message: "Please provide username, email and password"
-        })
-    }
 
     const isUserAlreadyExists = await userModel.findOne({
         $or: [ { username }, { email } ]
@@ -28,7 +47,7 @@ async function registerUserController(req, res) {
         })
     }
 
-    const hash = await bcrypt.hash(password, 10)
+    const hash = await bcrypt.hash(password, 12)
 
     const user = await userModel.create({
         username,
@@ -36,14 +55,9 @@ async function registerUserController(req, res) {
         password: hash
     })
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
+    const token = createToken(user)
 
-    res.cookie("token", token)
-
+    res.cookie(COOKIE_NAME, token, cookieOptions)
 
     res.status(201).json({
         message: "User registered successfully",
@@ -82,13 +96,9 @@ async function loginUserController(req, res) {
         })
     }
 
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
+    const token = createToken(user)
 
-    res.cookie("token", token)
+    res.cookie(COOKIE_NAME, token, cookieOptions)
     res.status(200).json({
         message: "User loggedIn successfully.",
         user: {
@@ -106,13 +116,13 @@ async function loginUserController(req, res) {
  * @access public
  */
 async function logoutUserController(req, res) {
-    const token = req.cookies.token
+    const token = req.cookies[ COOKIE_NAME ]
 
     if (token) {
         await tokenBlacklistModel.create({ token })
     }
 
-    res.clearCookie("token")
+    res.clearCookie(COOKIE_NAME, clearCookieOptions)
 
     res.status(200).json({
         message: "User logged out successfully"
@@ -128,7 +138,11 @@ async function getMeController(req, res) {
 
     const user = await userModel.findById(req.user.id)
 
-
+    if (!user) {
+        return res.status(404).json({
+            message: "User not found."
+        })
+    }
 
     res.status(200).json({
         message: "User details fetched successfully",

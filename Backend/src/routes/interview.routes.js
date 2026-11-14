@@ -2,6 +2,8 @@ const express = require("express")
 const authMiddleware = require("../middlewares/auth.middleware")
 const interviewController = require("../controllers/interview.controller")
 const upload = require("../middlewares/file.middleware")
+const { interviewLimiter } = require("../middlewares/rateLimit.middleware")
+const { validateInterviewPayload } = require("../validators/interview.validator")
 
 const interviewRouter = express.Router()
 
@@ -12,7 +14,7 @@ const interviewRouter = express.Router()
  * @description generate new interview report on the basis of user self description,resume pdf and job description.
  * @access private
  */
-interviewRouter.post("/", authMiddleware.authUser, upload.single("resume"), interviewController.generateInterViewReportController)
+interviewRouter.post("/", authMiddleware.authUser, interviewLimiter, upload.single("resume"), validateInterviewPayload, interviewController.generateInterViewReportController)
 
 /**
  * @route GET /api/interview/report/:interviewId

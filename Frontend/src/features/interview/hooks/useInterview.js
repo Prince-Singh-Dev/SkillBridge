@@ -4,6 +4,11 @@ import { InterviewContext } from "../interview.context"
 import { useParams } from "react-router"
 
 
+function getErrorMessage(error, fallback) {
+    return error?.response?.data?.message || error?.message || fallback
+}
+
+
 export const useInterview = () => {
 
     const context = useContext(InterviewContext)
@@ -13,79 +18,113 @@ export const useInterview = () => {
         throw new Error("useInterview must be used within an InterviewProvider")
     }
 
-    const { loading, setLoading, report, setReport, reports, setReports } = context
+    const { loading, setLoading, report, setReport, reports, setReports, error, setError } = context
 
     const generateReport = async ({ jobDescription, selfDescription, resumeFile }) => {
         setLoading(true)
-        let response = null
+        setError(null)
+
         try {
-            response = await generateInterviewReport({ jobDescription, selfDescription, resumeFile })
+            const response = await generateInterviewReport({ jobDescription, selfDescription, resumeFile })
             setReport(response.interviewReport)
-        } catch (error) {
-            console.log(error)
+            return response.interviewReport
+        } catch (err) {
+            setError(getErrorMessage(err, "Failed to generate interview report."))
+            return null
         } finally {
             setLoading(false)
         }
-
-        return response.interviewReport
     }
 
     const getReportById = async (interviewId) => {
         setLoading(true)
-        let response = null
+        setError(null)
+
         try {
-            response = await getInterviewReportById(interviewId)
+            const response = await getInterviewReportById(interviewId)
             setReport(response.interviewReport)
-        } catch (error) {
-            console.log(error)
+            return response.interviewReport
+        } catch (err) {
+            setError(getErrorMessage(err, "Failed to load interview report."))
+            return null
         } finally {
             setLoading(false)
         }
-        return response.interviewReport
     }
 
     const getReports = async () => {
         setLoading(true)
-        let response = null
+        setError(null)
+
         try {
-            response = await getAllInterviewReports()
+            const response = await getAllInterviewReports()
             setReports(response.interviewReports)
-        } catch (error) {
-            console.log(error)
+            return response.interviewReports
+        } catch (err) {
+            setError(getErrorMessage(err, "Failed to load interview reports."))
+            return null
         } finally {
             setLoading(false)
         }
-
-        return response.interviewReports
     }
 
     const getResumePdf = async (interviewReportId) => {
         setLoading(true)
-        let response = null
+        setError(null)
+
         try {
-            response = await generateResumePdf({ interviewReportId })
+            const response = await generateResumePdf({ interviewReportId })
             const url = window.URL.createObjectURL(new Blob([ response ], { type: "application/pdf" }))
             const link = document.createElement("a")
             link.href = url
             link.setAttribute("download", `resume_${interviewReportId}.pdf`)
             document.body.appendChild(link)
             link.click()
-        }
-        catch (error) {
-            console.log(error)
+            link.remove()
+            window.setTimeout(() => window.URL.revokeObjectURL(url), 1000)
+        } catch (err) {
+            setError(getErrorMessage(err, "Failed to download resume PDF."))
         } finally {
             setLoading(false)
         }
     }
 
     useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId)
-        } else {
-            getReports()
-        }
-    }, [ interviewId ])
 
-    return { loading, report, reports, generateReport, getReportById, getReports, getResumePdf }
+        let isActive = true
+
+        const loadInterviewData = async () => {
+            setLoading(true)
+            setError(null)
+
+            try {
+                if (interviewId) {
+                    const response = await getInterviewReportById(interviewId)
+                    if (isActive) setReport(response.interviewReport)
+                } else {
+                    const response = await getAllInterviewReports()
+                    if (isActive) setReports(response.interviewReports)
+                }
+            } catch (err) {
+                if (isActive) {
+                    setError(getErrorMessage(
+                        err,
+                        interviewId ? "Failed to load interview report." : "Failed to load interview reports."
+                    ))
+                }
+            } finally {
+                if (isActive) setLoading(false)
+            }
+        }
+
+        loadInterviewData()
+
+        return () => {
+            isActive = false
+        }
+
+    }, [ interviewId, setLoading, setError, setReport, setReports ])
+
+    return { loading, report, reports, error, generateReport, getReportById, getReports, getResumePdf }
 
 }
