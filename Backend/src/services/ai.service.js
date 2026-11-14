@@ -114,8 +114,19 @@ async function generatePdfFromHtml(htmlContent) {
     let browser
 
     try {
-        browser = await puppeteer.launch({ headless: true, timeout: PDF_TIMEOUT_MS })
+        const launchOptions = {
+            headless: true,
+            timeout: PDF_TIMEOUT_MS,
+            args: [ "--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage" ]
+        }
+
+        if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+            launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH
+        }
+
+        browser = await puppeteer.launch(launchOptions)
         const page = await browser.newPage()
+        await page.setJavaScriptEnabled(false)
         await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: PDF_TIMEOUT_MS })
 
         const pdfBuffer = await page.pdf({
