@@ -1,10 +1,4 @@
-import axios from "axios";
-
-const api = axios.create({
-    baseURL: "http://localhost:3000",
-    withCredentials: true,
-    timeout: 30000
-})
+import api, { dedupeRequest } from "../../../lib/api"
 
 
 /**
@@ -35,20 +29,24 @@ export const generateInterviewReport = async ({ jobDescription, selfDescription,
 /**
  * @description Service to get interview report by interviewId.
  */
-export const getInterviewReportById = async (interviewId) => {
-    const response = await api.get(`/api/interview/report/${interviewId}`)
+export const getInterviewReportById = (interviewId) => {
+    return dedupeRequest(`interview-report-${interviewId}`, async () => {
+        const response = await api.get(`/api/interview/report/${interviewId}`)
 
-    return response.data
+        return response.data
+    })
 }
 
 
 /**
  * @description Service to get all interview reports of logged in user.
  */
-export const getAllInterviewReports = async () => {
-    const response = await api.get("/api/interview/")
+export const getAllInterviewReports = () => {
+    return dedupeRequest("interview-reports", async () => {
+        const response = await api.get("/api/interview/")
 
-    return response.data
+        return response.data
+    })
 }
 
 
@@ -58,7 +56,7 @@ export const getAllInterviewReports = async () => {
 export const generateResumePdf = async ({ interviewReportId }) => {
     const response = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, null, {
         responseType: "blob",
-        timeout: 120000
+        timeout: 180000
     })
 
     return response.data

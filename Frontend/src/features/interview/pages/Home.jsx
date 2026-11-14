@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
+import LogoutButton from '../../../components/LogoutButton.jsx'
 
 const Home = () => {
 
@@ -31,6 +32,8 @@ const Home = () => {
 
     return (
         <div className='home-page'>
+
+            <LogoutButton />
 
             {/* Page Header */}
             <header className='page-header'>

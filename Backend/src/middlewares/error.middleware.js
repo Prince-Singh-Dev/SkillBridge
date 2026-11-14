@@ -58,6 +58,12 @@ function errorHandler(err, req, res, next) {
         })
     }
 
+    if (err.status === 502 || err.status === 504) {
+        return res.status(err.status).json({
+            message: err.message
+        })
+    }
+
     console.error(err)
 
     return res.status(500).json({

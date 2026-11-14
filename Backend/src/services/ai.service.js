@@ -7,6 +7,9 @@ const ai = new GoogleGenAI({
     apiKey: process.env.GOOGLE_GENAI_API_KEY
 })
 
+const AI_TIMEOUT_MS = 90 * 1000
+const PDF_TIMEOUT_MS = 60 * 1000
+
 
 const interviewReportSchema = z.object({
     matchScore: z.number().describe("A score between 0 and 100 indicating how well the candidate's profile matches the job describe"),
@@ -32,6 +35,46 @@ const interviewReportSchema = z.object({
     title: z.string().describe("The title of the job for which the interview report is generated"),
 })
 
+const resumePdfSchema = z.object({
+    html: z.string().describe("The HTML content of the resume which can be converted to PDF using any library like puppeteer")
+})
+
+
+function createHttpError(message, status) {
+    const error = new Error(message)
+    error.status = status
+    return error
+}
+
+function parseStructuredResponse(text, schema, fallbackMessage) {
+    let data
+
+    try {
+        data = JSON.parse(text)
+    } catch {
+        throw createHttpError(fallbackMessage, 502)
+    }
+
+    const result = schema.safeParse(data)
+
+    if (!result.success) {
+        throw createHttpError(fallbackMessage, 502)
+    }
+
+    return result.data
+}
+
+function withTimeout(promise, timeoutMs, message) {
+    let timer
+
+    const timeout = new Promise((_, reject) => {
+        timer = setTimeout(() => reject(createHttpError(message, 504)), timeoutMs)
+    })
+
+    return Promise.race([ promise, timeout ]).finally(() => clearTimeout(timer))
+}
+
+
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
 
 
@@ -46,11 +89,21 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
+            responseJsonSchema: zodToJsonSchema(interviewReportSchema),
+            httpOptions: {
+                timeout: AI_TIMEOUT_MS,
+                retryOptions: {
+                    attempts: 1
+                }
+            }
         }
     })
 
-    return JSON.parse(response.text)
+    return parseStructuredResponse(
+        response.text,
+        interviewReportSchema,
+        "The AI returned an invalid interview report. Please try again."
+    )
 
 
 }
@@ -58,29 +111,33 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 
 
 async function generatePdfFromHtml(htmlContent) {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage();
-    await page.setContent(htmlContent, { waitUntil: "networkidle0" })
+    let browser
 
-    const pdfBuffer = await page.pdf({
-        format: "A4", margin: {
-            top: "20mm",
-            bottom: "20mm",
-            left: "15mm",
-            right: "15mm"
+    try {
+        browser = await puppeteer.launch({ headless: true, timeout: PDF_TIMEOUT_MS })
+        const page = await browser.newPage()
+        await page.setContent(htmlContent, { waitUntil: "networkidle0", timeout: PDF_TIMEOUT_MS })
+
+        const pdfBuffer = await page.pdf({
+            format: "A4",
+            timeout: PDF_TIMEOUT_MS,
+            margin: {
+                top: "20mm",
+                bottom: "20mm",
+                left: "15mm",
+                right: "15mm"
+            }
+        })
+
+        return pdfBuffer
+    } finally {
+        if (browser) {
+            await browser.close().catch(() => {})
         }
-    })
-
-    await browser.close()
-
-    return pdfBuffer
+    }
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
-
-    const resumePdfSchema = z.object({
-        html: z.string().describe("The HTML content of the resume which can be converted to PDF using any library like puppeteer")
-    })
 
     const prompt = `Generate resume for a candidate with the following details:
                         Resume: ${resume || "No resume provided."}
@@ -100,16 +157,28 @@ async function generateResumePdf({ resume, selfDescription, jobDescription }) {
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(resumePdfSchema),
+            responseJsonSchema: zodToJsonSchema(resumePdfSchema),
+            httpOptions: {
+                timeout: AI_TIMEOUT_MS,
+                retryOptions: {
+                    attempts: 1
+                }
+            }
         }
     })
 
 
-    const jsonContent = JSON.parse(response.text)
+    const jsonContent = parseStructuredResponse(
+        response.text,
+        resumePdfSchema,
+        "The AI returned an invalid resume. Please try again."
+    )
 
-    const pdfBuffer = await generatePdfFromHtml(jsonContent.html)
-
-    return pdfBuffer
+    return withTimeout(
+        generatePdfFromHtml(jsonContent.html),
+        PDF_TIMEOUT_MS,
+        "Resume PDF generation timed out. Please try again."
+    )
 
 }
 

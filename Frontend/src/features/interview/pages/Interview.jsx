@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import '../style/interview.scss'
 import { useInterview } from '../hooks/useInterview.js'
 import { useParams } from 'react-router'
+import LogoutButton from '../../../components/LogoutButton.jsx'
 
 
 
@@ -93,6 +94,7 @@ const Interview = () => {
 
     return (
         <div className='interview-page'>
+            <LogoutButton />
             <div className='interview-layout'>
 
                 {/* ── Left Nav ── */}

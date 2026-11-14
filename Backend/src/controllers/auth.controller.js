@@ -7,17 +7,19 @@ const COOKIE_NAME = "token"
 const TOKEN_EXPIRES_IN = "1d"
 const TOKEN_MAX_AGE = 24 * 60 * 60 * 1000
 
+const isProduction = process.env.NODE_ENV === "production"
+
 const cookieOptions = {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction,
     maxAge: TOKEN_MAX_AGE
 }
 
 const clearCookieOptions = {
     httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production"
+    sameSite: isProduction ? "none" : "lax",
+    secure: isProduction
 }
 
 function createToken(user) {
@@ -119,7 +121,11 @@ async function logoutUserController(req, res) {
     const token = req.cookies[ COOKIE_NAME ]
 
     if (token) {
-        await tokenBlacklistModel.create({ token })
+        await tokenBlacklistModel.updateOne(
+            { token },
+            { $setOnInsert: { token } },
+            { upsert: true }
+        )
     }
 
     res.clearCookie(COOKIE_NAME, clearCookieOptions)
